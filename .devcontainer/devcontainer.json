@@ -1,0 +1,8 @@
+{
+  "name": "PHP",
+  "dockerFile": "Dockerfile",
+  "forwardPorts": [8882],
+  "mounts": [
+    "source=${localWorkspaceFolder}/.wp-now,target=/home/vscode/.wp-now,type=bind,consistency=cached"
+  ]
+}
