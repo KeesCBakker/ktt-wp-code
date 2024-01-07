@@ -12,7 +12,7 @@
  * Plugin Name:   KeesTalksTech Code
  * Plugin URI:    https://github.com/KeesCBakker/ktt-wp-code
  * Description:   A plugin to support Highlight.js and Mermaid
- * Version:       0.1
+ * Version:       1.0
  * Author:        Kees C. Bakker
  * Author URI:    https://keestalkstech.com/
  * Text Domain:   ktt-wp-code
@@ -30,10 +30,10 @@ if (!class_exists('KttCodeUpdater')) {
     include_once(plugin_dir_path(__FILE__) . 'updater.php');
 }
 
-// $updater = new KttCodeUpdater(__FILE__);
-// $updater->set_username('KeesCBakker');
-// $updater->set_repository('ktt-code');
-// $updater->initialize();
+$updater = new KttCodeUpdater(__FILE__);
+$updater->set_username('KeesCBakker');
+$updater->set_repository('ktt-wp-code');
+$updater->initialize();
 
 function enqueue_language_highlight_js()
 {
@@ -64,8 +64,27 @@ function enqueue_language_highlight_js()
             }
         }
 
+        // include mermaid and start script
+        if ($languages["mermaid"] == true) {
+            $script_url = plugins_url('lib/mermaid/mermaid.min.js', __FILE__);
+            wp_enqueue_script('mermaid-js', $script_url, array(), null, true);
+
+            $script_url = plugins_url('js/mermaid.js', __FILE__);
+            wp_enqueue_script('mermaid-client-js', $script_url, array('mermaid-js'), null, true);
+
+            $style_url = plugins_url('css/mermaid.css', __FILE__);
+            wp_enqueue_style('mermaid-client-style', $style_url, array(), null);
+        }
+
+        // load main highlight, highlight+copy and language js + css
         $script_url = plugins_url('lib/highlight/highlight.min.js', __FILE__);
         wp_enqueue_script('highlight-js', $script_url, array(), null, true);
+
+        $script_url = plugins_url('lib/highlightjs-copy/highlightjs-copy.min.js', __FILE__);
+        wp_enqueue_script('highlight-copy-js', $script_url, array(), null, true);
+
+        $style_url = plugins_url('lib/highlightjs-copy/highlightjs-copy.min.css', __FILE__);
+        wp_enqueue_style('highlight-copy-js-style', $style_url, array(), null);
 
         foreach (array_keys($languages) as $lang) {
             $file_path = plugin_dir_path(__FILE__) . "lib/highlight/languages/{$lang}.min.js";
@@ -75,11 +94,24 @@ function enqueue_language_highlight_js()
             }
         }
 
-        wp_add_inline_script('highlight-js', 'document.addEventListener("DOMContentLoaded", function() { hljs.highlightAll(); });');
+        $script_url = plugins_url('js/highlight.js', __FILE__);
+        wp_enqueue_script('highlight-client-js', $script_url, array('highlight-copy-js'), null, true);
 
-        // Enqueue the highlight.js style
+        // load theme
         $style_url = plugins_url('lib/highlight/styles/atom-one-dark.min.css', __FILE__);
         wp_enqueue_style('highlight-js-style', $style_url, array(), null);
     }
 }
 add_action('wp_enqueue_scripts', 'enqueue_language_highlight_js');
+
+function add_type_attribute($tag, $handle, $src)
+{
+    // if not your script, do nothing and return original $tag
+    if ('mermaid-client-js' !== $handle) {
+        return $tag;
+    }
+    // change the script tag by adding type="module" and return it.
+    $tag = '<script type="module" src="' . esc_url($src) . '"></script>';
+    return $tag;
+}
+add_filter('script_loader_tag', 'add_type_attribute', 10, 3);

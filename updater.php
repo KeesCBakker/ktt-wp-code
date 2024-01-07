@@ -58,6 +58,7 @@ class KttCodeUpdater
         $response = current($response); // Get the first item
       }
 
+
       $this->github_response = $response; // Set it to our property
     }
   }
