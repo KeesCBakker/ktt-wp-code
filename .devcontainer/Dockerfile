@@ -18,4 +18,12 @@ RUN npm install -g npm \
     @wp-now/wp-now \
     node-gyp
 
+# Copy bash profile
+COPY ./.bashrc /tmp/.bashrc
+RUN cat /tmp/.bashrc >> /home/vscode/.bashrc && \
+    rm /tmp/.bashrc
+
+# Copy startup
 COPY ./startup.sh /
+RUN chmod +x /startup.sh
+

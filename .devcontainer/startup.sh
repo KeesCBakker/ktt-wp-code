@@ -10,5 +10,7 @@ git config --global --add safe.directory "$PWD"
 # - error: cannot run C:\Program Files (x86)\Gpg4win..\GnuPG\bin\gpg.exe: No such file or directory.
 git config --global gpg.program gpg 
 
-# make release executable
+# make scripts executable
 chmod +x ./scripts/*.sh
+
+

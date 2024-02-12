@@ -7,8 +7,5 @@
   "mounts": [
     "source=${localWorkspaceFolder}/.wp-now,target=/home/vscode/.wp-now,type=bind,consistency=delegated"
   ],
-  "postStartCommand": "/startup.sh",
-  "remoteEnv": {
-    "PATH": "${containerEnv:PATH}:/workspaces/ktt-wp-code/scripts"
-  }
+  "postStartCommand": "/startup.sh"
 }
