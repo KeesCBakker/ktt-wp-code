@@ -1,4 +1,4 @@
 document.addEventListener("DOMContentLoaded", function () {
-  hljs.addPlugin(new CopyButtonPlugin());
-  hljs.highlightAll();
-});
+  hljs.addPlugin(new CopyButtonPlugin())
+  hljs.highlightAll()
+})
