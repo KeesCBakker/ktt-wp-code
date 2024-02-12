@@ -6,13 +6,13 @@
  * @package       KTTC
  * @author        Kees . Bakker
  * @license       gplv2
- * @version       0.7
+ * @version       1.1.0
  *
  * @wordpress-plugin
  * Plugin Name:   KeesTalksTech Code
  * Plugin URI:    https://github.com/KeesCBakker/ktt-wp-code
  * Description:   A plugin to support Highlight.js and Mermaid
- * Version:       1.0
+ * Version:       1.1.0
  * Author:        Kees C. Bakker
  * Author URI:    https://keestalkstech.com/
  * Text Domain:   ktt-wp-code
