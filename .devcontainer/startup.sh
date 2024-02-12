@@ -11,4 +11,4 @@ git config --global --add safe.directory "$PWD"
 git config --global gpg.program gpg 
 
 # make release executable
-chmod +x ./scripts/release.sh
+chmod +x ./scripts/*.sh

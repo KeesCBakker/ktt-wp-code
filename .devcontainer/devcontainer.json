@@ -1,7 +1,14 @@
 {
   "name": "PHP",
   "dockerFile": "Dockerfile",
-  "forwardPorts": [8882],
-  "mounts": ["source=${localWorkspaceFolder}/.wp-now,target=/home/vscode/.wp-now,type=bind,consistency=delegated"],
-  "postStartCommand": "/startup.sh"
+  "forwardPorts": [
+    8882
+  ],
+  "mounts": [
+    "source=${localWorkspaceFolder}/.wp-now,target=/home/vscode/.wp-now,type=bind,consistency=delegated"
+  ],
+  "postStartCommand": "/startup.sh",
+  "remoteEnv": {
+    "PATH": "${containerEnv:PATH}:/workspaces/ktt-wp-code/scripts"
+  }
 }
