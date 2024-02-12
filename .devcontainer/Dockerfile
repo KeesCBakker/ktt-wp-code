@@ -18,7 +18,8 @@ RUN npm install -g npm \
     @wp-now/wp-now \
     node-gyp
 
-# Copy bash profile
+# Copy bash profile, if you copy it directly
+# you'll loose your colors :-(
 COPY ./.bashrc /tmp/.bashrc
 RUN cat /tmp/.bashrc >> /home/vscode/.bashrc && \
     rm /tmp/.bashrc
