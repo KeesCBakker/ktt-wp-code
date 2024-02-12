@@ -1,4 +1,3 @@
-# Start with the same base image
 FROM mcr.microsoft.com/devcontainers/php:0-8.2
 
 # Install xdg-utils, curl and gnupg2
@@ -19,7 +18,7 @@ RUN npm install -g npm \
     node-gyp
 
 # Copy bash profile, if you copy it directly
-# you'll loose your colors :-(
+# you'll lose your colors :-(
 COPY ./.bashrc /tmp/.bashrc
 RUN cat /tmp/.bashrc >> /home/vscode/.bashrc && \
     rm /tmp/.bashrc

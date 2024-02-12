@@ -9,11 +9,13 @@ popd > /dev/null
 
 export PATH="$PATH:$WORKSPACE_SCRIPT_PATH"
 
-# make release alias
+# make aliases for easy execution
+# alias script_name='script_name.sh'
 alias release='release.sh'
 
+# let the user know
 echo ""
 echo "To release a new version do:"
 echo ""
-echo "$ release [patch|minor|major]"
+echo "\$ release [patch|minor|major]"
 echo ""
