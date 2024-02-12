@@ -63,3 +63,8 @@ git push
 git push --tags
 
 echo "Git commit and tag for version $newVersion created and pushed."
+
+echo ""
+echo "To create a new release, click:"
+echo "https://github.com/KeesCBakker/ktt-wp-code/releases/new?tag=$newVersion&title=KeesTalksTech%20Code%20v$newVersion"
+echo ""
