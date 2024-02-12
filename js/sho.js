@@ -9,8 +9,7 @@ hljs.registerLanguage("sho", function () {
       },
       {
         scope: "attribute",
-        begin: /--[a-zA-Z]+/,
-        end: /$/
+        begin: /--[a-zA-Z]+/
       },
       {
         scope: "comment",
