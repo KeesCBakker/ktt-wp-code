@@ -4,7 +4,7 @@
  * KeesTalksTech Code
  *
  * @package       KTTC
- * @author        Kees . Bakker
+ * @author        Kees C. Bakker
  * @license       gplv2
  * @version       1.1.1
  *
