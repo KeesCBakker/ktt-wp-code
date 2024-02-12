@@ -80,12 +80,6 @@ function enqueue_language_highlight_js()
         $script_url = plugins_url('lib/highlight/highlight.min.js', __FILE__);
         wp_enqueue_script('highlight-js', $script_url, array(), null, true);
 
-        $script_url = plugins_url('lib/highlightjs-copy/highlightjs-copy.min.js', __FILE__);
-        wp_enqueue_script('highlight-copy-js', $script_url, array(), null, true);
-
-        $style_url = plugins_url('lib/highlightjs-copy/highlightjs-copy.min.css', __FILE__);
-        wp_enqueue_style('highlight-copy-js-style', $style_url, array(), null);
-
         foreach (array_keys($languages) as $lang) {
             $file_path = plugin_dir_path(__FILE__) . "lib/highlight/languages/{$lang}.min.js";
             if (file_exists($file_path)) {
