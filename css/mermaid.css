@@ -1,6 +1,6 @@
 .pswp__img[src^="data:"] {
-    background-color: #fff;
-    border-style: solid;
-    border-width: var(--gutter);
-    border-color: #fff;
+  background-color: #fff;
+  border-style: solid;
+  border-width: var(--gutter);
+  border-color: #fff;
 }

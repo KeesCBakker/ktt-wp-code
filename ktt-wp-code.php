@@ -6,13 +6,13 @@
  * @package       KTTC
  * @author        Kees . Bakker
  * @license       gplv2
- * @version       0.7
+ * @version       1.1.0
  *
  * @wordpress-plugin
  * Plugin Name:   KeesTalksTech Code
  * Plugin URI:    https://github.com/KeesCBakker/ktt-wp-code
  * Description:   A plugin to support Highlight.js and Mermaid
- * Version:       1.0
+ * Version:       1.1.0
  * Author:        Kees C. Bakker
  * Author URI:    https://keestalkstech.com/
  * Text Domain:   ktt-wp-code
@@ -65,7 +65,7 @@ function enqueue_language_highlight_js()
         }
 
         // include mermaid and start script
-        if ($languages["mermaid"] == true) {
+        if (isset($languages["mermaid"]) && $languages["mermaid"] == true) {
             $script_url = plugins_url('lib/mermaid/mermaid.min.js', __FILE__);
             wp_enqueue_script('mermaid-js', $script_url, array(), null, true);
 
@@ -100,6 +100,23 @@ function enqueue_language_highlight_js()
         // load theme
         $style_url = plugins_url('lib/highlight/styles/atom-one-dark.min.css', __FILE__);
         wp_enqueue_style('highlight-js-style', $style_url, array(), null);
+
+
+        if (isset($languages["sho"]) && $languages["sho"] == true) {
+            $script_url = plugins_url('js/sho.js', __FILE__);
+            wp_enqueue_script('sho-client-js', $script_url, array('highlight-client-js'), null, true);
+
+            $style_url = plugins_url('css/sho.css', __FILE__);
+            wp_enqueue_style('sho-client-style', $style_url, array('highlight-js-style'), null);
+        }
+
+        if (isset($languages["spark_output"]) && $languages["spark_output"] == true) {
+            $script_url = plugins_url('js/spark_output.js', __FILE__);
+            wp_enqueue_script('sho-client-js', $script_url, array('highlight-client-js'), null, true);
+
+            $style_url = plugins_url('css/spark_output.css', __FILE__);
+            wp_enqueue_style('sho-client-style', $style_url, array('highlight-js-style'), null);
+        }
     }
 }
 add_action('wp_enqueue_scripts', 'enqueue_language_highlight_js');

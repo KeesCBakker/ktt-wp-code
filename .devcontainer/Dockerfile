@@ -17,3 +17,5 @@ RUN npm install -g npm \
     && npm install -g \
     @wp-now/wp-now \
     node-gyp
+
+COPY ./startup.sh /
