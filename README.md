@@ -10,6 +10,13 @@ This plugin supports all the languages of the highlightjs project and:
 - `sho` - shell output - as seen here: <a href="https://keestalkstech.com/2022/05/using-the-s3p-api-to-copy-1-3m-of-5m-of-aws-s3-keys/#help">https://keestalkstech.com/2022/05/using-the-s3p-api-to-copy-1-3m-of-5m-of-aws-s3-keys/#help</a>
 - `spart_output` - output from Spark - as seen here: <a href="https://keestalkstech.com/2019/11/easy-spark-optimization-for-max-record-aggregate-instead-of-join/#results
   ">https://keestalkstech.com/2019/11/easy-spark-optimization-for-max-record-aggregate-instead-of-join/#results</a>
+- Adds some aliases:
+
+```
+'sh' => 'bash',
+'docker' => 'dockerfile',
+'ps' => 'powershell'
+```
 
 ## Dev notes
 
