@@ -4,7 +4,7 @@
 set -e
 
 # Check if the git working directory is dirty
-if ! git diff-index --quiet HEAD --; then
+if [ -n "$(git status --porcelain)" ]; then
     echo "Your git directory is dirty. Please commit or stash your changes before running this script."
     exit 1
 fi
