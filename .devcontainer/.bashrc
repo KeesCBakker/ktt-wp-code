@@ -13,9 +13,14 @@ export PATH="$PATH:$WORKSPACE_SCRIPT_PATH"
 # alias script_name='script_name.sh'
 alias release='release.sh'
 
+# make sure our .wp-now is present to cache
+mkdir -p "$WORKSPACE_SCRIPT_PATH/../.wp-now"
+
 # let the user know
 echo ""
 echo "To release a new version do:"
-echo ""
 echo "\$ release [patch|minor|major]"
+echo ""
+echo "To start the project:"
+echo "\$ wp-now start"
 echo ""
