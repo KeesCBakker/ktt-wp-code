@@ -88,8 +88,14 @@ function enqueue_language_highlight_js()
             }
         }
 
+        $script_url = plugins_url('lib/highlightjs-copy/highlightjs-copy.min.js', __FILE__);
+        wp_enqueue_script('highlight-copy-js', $script_url, array(), null, true);
+
+        $style_url = plugins_url('lib/highlightjs-copy/highlightjs-copy.min.css', __FILE__);
+        wp_enqueue_style('highlight-copy-js-style', $style_url, array(), null);
+
         $script_url = plugins_url('js/highlight.js', __FILE__);
-        wp_enqueue_script('highlight-client-js', $script_url, array('highlight-copy-js'), null, true);
+        wp_enqueue_script('highlight-client-js', $script_url, array('highlight-js', 'highlight-copy-js'), null, true);
 
         // load theme
         $style_url = plugins_url('lib/highlight/styles/atom-one-dark.min.css', __FILE__);
