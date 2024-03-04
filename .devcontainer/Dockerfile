@@ -15,7 +15,7 @@ RUN apt-get update && \
 RUN npm install -g npm \
     && npm install -g \
     @wp-now/wp-now \
-    node-gyp
+    node-gyp  --no-audit --no-fund
 
 # Copy bash profile, if you copy it directly
 # you'll lose your colors :-(
