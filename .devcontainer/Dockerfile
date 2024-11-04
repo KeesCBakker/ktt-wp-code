@@ -19,10 +19,11 @@ RUN npm install -g npm \
 
 # Copy bash profile, if you copy it directly
 # you'll lose your colors :-(
-COPY ./.bashrc /tmp/.bashrc
-RUN cat /tmp/.bashrc >> /home/vscode/.bashrc && \
-    rm /tmp/.bashrc
-
+COPY ./.profile /tmp/.profile
+RUN cat /tmp/.profile >> /home/vscode/.bashrc && \
+    cat /tmp/.profile >> /home/vscode/.zshrc && \
+    rm /tmp/.profile
+    
 # Copy startup
 COPY ./startup.sh /
 RUN chmod +x /startup.sh
