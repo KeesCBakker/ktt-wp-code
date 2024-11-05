@@ -42,25 +42,30 @@ class KttCodeUpdater
 
   private function get_repository_info()
   {
-    if (is_null($this->github_response)) { // Do we have a response?
-      $args = array();
-      $request_uri = sprintf('https://api.github.com/repos/%s/%s/releases', $this->username, $this->repository); // Build URI
+    if (is_null($this->github_response)) {
+      $request_uri = sprintf('https://api.github.com/repos/%s/%s/releases', $this->username, $this->repository);
 
       $args = array();
-
-      if ($this->authorize_token) { // Is there an access token?
-        $args['headers']['Authorization'] = "bearer {$this->authorize_token}"; // Set the headers
+      if ($this->authorize_token) {
+        $args['headers']['Authorization'] = "Bearer {$this->authorize_token}";
       }
 
-      $response = json_decode(wp_remote_retrieve_body(wp_remote_get($request_uri, $args)), true); // Get JSON and parse it
+      $response = wp_remote_get($request_uri, $args);
+      $response_body = wp_remote_retrieve_body($response);
 
-      if (is_array($response)) { // If it is an array
-        $response = current($response); // Get the first item
+      if (is_wp_error($response) || empty($response_body)) {
+        $this->github_response = null;
+        return;
       }
 
-
-      $this->github_response = $response; // Set it to our property
+      $decoded_response = json_decode($response_body, true);
+      if (is_array($decoded_response) && !empty($decoded_response)) {
+        $this->github_response = current($decoded_response);
+      } else {
+        $this->github_response = null;
+      }
     }
+    return $this->github_response;
   }
 
   public function initialize()
@@ -69,58 +74,45 @@ class KttCodeUpdater
     add_filter('plugins_api', array($this, 'plugin_popup'), 10, 3);
     add_filter('upgrader_post_install', array($this, 'after_install'), 10, 3);
 
-    // Add Authorization Token to download_package
     add_filter(
       'upgrader_pre_download',
       function () {
         add_filter('http_request_args', [$this, 'download_package'], 15, 2);
-        return false; // upgrader_pre_download filter default return value.
+        return false;
       }
     );
   }
 
   public function modify_transient($transient)
   {
+    if (property_exists($transient, 'checked')) {
+      if ($checked = $transient->checked) {
+        $repo_info = $this->get_repository_info();
 
-    if (property_exists($transient, 'checked')) { // Check if transient has a checked property
+        if ($repo_info && version_compare($repo_info['tag_name'], $checked[$this->basename], 'gt')) {
+          $new_files = $repo_info['zipball_url'];
+          $slug = current(explode('/', $this->basename));
 
-      if ($checked = $transient->checked) { // Did Wordpress check for updates?
-
-        $this->get_repository_info(); // Get the repo info
-
-        $out_of_date = version_compare($this->github_response['tag_name'], $checked[$this->basename], 'gt'); // Check if we're out of date
-
-        if ($out_of_date) {
-
-          $new_files = $this->github_response['zipball_url']; // Get the ZIP
-
-          $slug = current(explode('/', $this->basename)); // Create valid slug
-
-          $plugin = array( // setup our plugin info
+          $plugin = array(
             'url' => $this->plugin["PluginURI"],
             'slug' => $slug,
             'package' => $new_files,
-            'new_version' => $this->github_response['tag_name']
+            'new_version' => $repo_info['tag_name']
           );
 
-          $transient->response[$this->basename] = (object) $plugin; // Return it in response
+          $transient->response[$this->basename] = (object) $plugin;
         }
       }
     }
-
-    return $transient; // Return filtered transient
+    return $transient;
   }
 
   public function plugin_popup($result, $action, $args)
   {
+    if (!empty($args->slug) && $args->slug == current(explode('/', $this->basename))) {
+      $repo_info = $this->get_repository_info();
 
-    if (!empty($args->slug)) { // If there is a slug
-
-      if ($args->slug == current(explode('/', $this->basename))) { // And it's our slug
-
-        $this->get_repository_info(); // Get our repo info
-
-        // Set it to an array
+      if ($repo_info) {
         $plugin = array(
           'name'              => $this->plugin["Name"],
           'slug'              => $this->basename,
@@ -130,49 +122,44 @@ class KttCodeUpdater
           'num_ratings'       => '1337',
           'downloaded'        => '42',
           'added'             => '2023-05-27',
-          'version'           => $this->github_response['tag_name'],
+          'version'           => $repo_info['tag_name'],
           'author'            => $this->plugin["AuthorName"],
           'author_profile'    => $this->plugin["AuthorURI"],
-          'last_updated'      => $this->github_response['published_at'],
+          'last_updated'      => $repo_info['published_at'],
           'homepage'          => $this->plugin["PluginURI"],
           'short_description' => $this->plugin["Description"],
           'sections'          => array(
             'Description'     => $this->plugin["Description"],
-            'Updates'         => $this->github_response['body'],
+            'Updates'         => $repo_info['body'],
           ),
-          'download_link'    => $this->github_response['zipball_url']
+          'download_link'    => $repo_info['zipball_url']
         );
-
-        return (object) $plugin; // Return the data
+        return (object) $plugin;
       }
     }
-    return $result; // Otherwise return default
+    return $result;
   }
 
   public function download_package($args, $url)
   {
-
-    if (null !== $args['filename']) {
-      if ($this->authorize_token) {
-        $args = array_merge($args, array("headers" => array("Authorization" => "token {$this->authorize_token}")));
-      }
+    if (isset($args['filename']) && $this->authorize_token) {
+      $args['headers']['Authorization'] = "token {$this->authorize_token}";
     }
 
     remove_filter('http_request_args', [$this, 'download_package']);
-
     return $args;
   }
 
   public function after_install($response, $hook_extra, $result)
   {
-    global $wp_filesystem; // Get global FS object
+    global $wp_filesystem;
 
-    $install_directory = plugin_dir_path($this->file); // Our plugin directory
-    $wp_filesystem->move($result['destination'], $install_directory); // Move files to the plugin dir
-    $result['destination'] = $install_directory; // Set the destination for the rest of the stack
+    $install_directory = plugin_dir_path($this->file);
+    $wp_filesystem->move($result['destination'], $install_directory);
+    $result['destination'] = $install_directory;
 
-    if ($this->active) { // If it was active
-      activate_plugin($this->basename); // Reactivate
+    if ($this->active) {
+      activate_plugin($this->basename);
     }
 
     return $result;
