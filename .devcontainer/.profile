@@ -1,3 +1,5 @@
+#!/bin/sh
+
 # figure out workspace 
 export WORKSPACE_NAME=$(pwd | awk -F'/' '{for(i=1;i<=NF;i++) if ($i == "workspaces") {print $(i+1); exit}}')
 export WORKSPACE_SCRIPT_PATH="/workspaces/$WORKSPACE_NAME/scripts"
