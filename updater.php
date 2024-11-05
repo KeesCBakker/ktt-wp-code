@@ -15,6 +15,7 @@ class KttCodeUpdater
   {
     $this->file = $file;
     add_action('admin_init', array($this, 'set_plugin_properties'));
+    add_action('admin_init', array($this, 'check_for_plugin_update')); // Force update check on admin init
     return $this;
   }
 
@@ -38,6 +39,21 @@ class KttCodeUpdater
   public function authorize($token)
   {
     $this->authorize_token = $token;
+  }
+
+  public function check_for_plugin_update()
+  {
+    if (is_admin() && $this->is_plugins_page()) {
+      $transient = get_site_transient('update_plugins');
+      $this->modify_transient($transient);
+      set_site_transient('update_plugins', $transient); // Save the modified transient
+    }
+  }
+
+  private function is_plugins_page()
+  {
+    $current_screen = get_current_screen();
+    return isset($current_screen->id) && $current_screen->id === 'plugins';
   }
 
   private function get_repository_info()
@@ -85,23 +101,21 @@ class KttCodeUpdater
 
   public function modify_transient($transient)
   {
-    if (property_exists($transient, 'checked')) {
-      if ($checked = $transient->checked) {
-        $repo_info = $this->get_repository_info();
+    if (property_exists($transient, 'checked') && $checked = $transient->checked) {
+      $repo_info = $this->get_repository_info();
 
-        if ($repo_info && version_compare($repo_info['tag_name'], $checked[$this->basename], 'gt')) {
-          $new_files = $repo_info['zipball_url'];
-          $slug = current(explode('/', $this->basename));
+      if ($repo_info && version_compare($repo_info['tag_name'], $checked[$this->basename], 'gt')) {
+        $new_files = $repo_info['zipball_url'];
+        $slug = current(explode('/', $this->basename));
 
-          $plugin = array(
-            'url' => $this->plugin["PluginURI"],
-            'slug' => $slug,
-            'package' => $new_files,
-            'new_version' => $repo_info['tag_name']
-          );
+        $plugin = array(
+          'url' => $this->plugin["PluginURI"],
+          'slug' => $slug,
+          'package' => $new_files,
+          'new_version' => $repo_info['tag_name']
+        );
 
-          $transient->response[$this->basename] = (object) $plugin;
-        }
+        $transient->response[$this->basename] = (object) $plugin;
       }
     }
     return $transient;
