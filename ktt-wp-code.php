@@ -4,10 +4,6 @@
  * KeesTalksTech Code
  *
  * @package       KTTC
- * @author        Kees C. Bakker
- * @license       gplv2
- * @version       1.1.1
- *
  * @wordpress-plugin
  * Plugin Name:   KeesTalksTech Code
  * Plugin URI:    https://github.com/KeesCBakker/ktt-wp-code
@@ -15,17 +11,12 @@
  * Version:       1.3.4
  * Author:        Kees C. Bakker
  * Author URI:    https://keestalkstech.com/
- * Text Domain:   ktt-wp-code
- * Domain Path:   /ktt-wp-code
  * License:       MIT
- * License URI:   https://github.com/KeesCBakker/ktt-wp-code/LICENSE
- *
  */
 
-// Exit if accessed directly.
-if (!defined('ABSPATH')) exit;
+if (!defined('ABSPATH')) exit; // Exit if accessed directly
 
-/* REGISTER THE UPDATER */
+// Register the updater
 if (!class_exists('KttCodeUpdater')) {
     include_once(plugin_dir_path(__FILE__) . 'updater.php');
 }
@@ -35,6 +26,33 @@ $updater->set_username('KeesCBakker');
 $updater->set_repository('ktt-wp-code');
 $updater->initialize();
 
+// Add "Check for Updates" link to plugin action links
+add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'add_check_for_updates_link');
+function add_check_for_updates_link($links)
+{
+    $check_update_link = '<a href="' . esc_url(add_query_arg('check_for_update', '1')) . '">Check for Updates</a>';
+    array_unshift($links, $check_update_link);
+    return $links;
+}
+
+// Check for update on request
+add_action('admin_init', 'check_for_manual_plugin_update');
+function check_for_manual_plugin_update()
+{
+    if (is_admin() && isset($_GET['check_for_update']) && $_GET['check_for_update'] == '1') {
+        // Trigger the update check
+        $transient = get_site_transient('update_plugins');
+        global $updater;
+        $updater->modify_transient($transient);
+        set_site_transient('update_plugins', $transient);
+
+        // Redirect to plugins page to show any update results
+        wp_safe_redirect(admin_url('plugins.php'));
+        exit;
+    }
+}
+
+// (Rest of your plugin code)
 function enqueue_language_highlight_js()
 {
     global $post;
@@ -56,15 +74,13 @@ function enqueue_language_highlight_js()
                 foreach ($block_classes as $class) {
                     if (strpos($class, 'lang-') === 0 || strpos($class, 'language-') === 0) {
                         $lang = str_replace(array('lang-', 'language-'), '', $class);
-                        // Apply remapping if exists
                         $lang = $language_map[$lang] ?? $lang;
-                        $languages[$lang] = true; // Use keys to avoid duplicates
+                        $languages[$lang] = true;
                     }
                 }
             }
         }
 
-        // include mermaid and start script
         if (isset($languages["mermaid"]) && $languages["mermaid"] == true) {
             $script_url = plugins_url('lib/mermaid/mermaid.min.js', __FILE__);
             wp_enqueue_script('mermaid-js', $script_url, array(), null, true);
@@ -76,7 +92,6 @@ function enqueue_language_highlight_js()
             wp_enqueue_style('mermaid-client-style', $style_url, array(), null);
         }
 
-        // load main highlight, highlight+copy and language js + css
         $script_url = plugins_url('lib/highlight/highlight.min.js', __FILE__);
         wp_enqueue_script('highlight-js', $script_url, array(), null, true);
 
@@ -97,10 +112,8 @@ function enqueue_language_highlight_js()
         $script_url = plugins_url('js/highlight.js', __FILE__);
         wp_enqueue_script('highlight-client-js', $script_url, array('highlight-js', 'highlight-copy-js'), null, true);
 
-        // load theme
         $style_url = plugins_url('lib/highlight/styles/atom-one-dark.min.css', __FILE__);
         wp_enqueue_style('highlight-js-style', $style_url, array(), null);
-
 
         if (isset($languages["sho"]) && $languages["sho"] == true) {
             $script_url = plugins_url('js/sho.js', __FILE__);
@@ -123,11 +136,9 @@ add_action('wp_enqueue_scripts', 'enqueue_language_highlight_js');
 
 function add_type_attribute($tag, $handle, $src)
 {
-    // if not your script, do nothing and return original $tag
     if ('mermaid-client-js' !== $handle) {
         return $tag;
     }
-    // change the script tag by adding type="module" and return it.
     $tag = '<script type="module" src="' . esc_url($src) . '"></script>';
     return $tag;
 }
