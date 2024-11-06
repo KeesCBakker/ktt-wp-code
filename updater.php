@@ -15,7 +15,6 @@ class KttCodeUpdater
   {
     $this->file = $file;
     add_action('admin_init', array($this, 'set_plugin_properties'));
-    add_action('admin_init', array($this, 'check_for_plugin_update')); // Force update check on admin init
     return $this;
   }
 
@@ -39,15 +38,6 @@ class KttCodeUpdater
   public function authorize($token)
   {
     $this->authorize_token = $token;
-  }
-
-  public function check_for_plugin_update()
-  {
-    if (is_admin() && $this->is_plugins_page()) {
-      $transient = get_site_transient('update_plugins');
-      $this->modify_transient($transient);
-      set_site_transient('update_plugins', $transient); // Save the modified transient
-    }
   }
 
   private function is_plugins_page()
