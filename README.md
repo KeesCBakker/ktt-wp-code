@@ -12,7 +12,7 @@ This plugin supports all the languages of the highlightjs project and:
   ">https://keestalkstech.com/2019/11/easy-spark-optimization-for-max-record-aggregate-instead-of-join/#results</a>
 - Adds some aliases:
 
-```
+```php
 'sh' => 'bash',
 'docker' => 'dockerfile',
 'ps' => 'powershell'
@@ -20,13 +20,7 @@ This plugin supports all the languages of the highlightjs project and:
 
 ## Dev notes
 
-Before launching the dev container, make sure there is a local `.wp-now` directory:
-
-```sh
-mkdir -p .wp-now
-```
-
-In the dev container, you can start with:
+Our dev container works in Bash. A `.wp-now` cache directory will be created by the bash profile. In the dev container, you can start WordPress with:
 
 ```sh
 wp-now start

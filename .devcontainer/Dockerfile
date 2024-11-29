@@ -1,4 +1,3 @@
-# Start with the same base image
 FROM mcr.microsoft.com/devcontainers/php:0-8.2
 
 # Install xdg-utils, curl and gnupg2
@@ -16,13 +15,15 @@ RUN apt-get update && \
 RUN npm install -g npm \
     && npm install -g \
     @wp-now/wp-now \
-    node-gyp
+    node-gyp  --no-audit --no-fund
 
-# Copy bash profile
-COPY ./.bashrc /tmp/.bashrc
-RUN cat /tmp/.bashrc >> /home/vscode/.bashrc && \
-    rm /tmp/.bashrc
-
+# Copy bash profile, if you copy it directly
+# you'll lose your colors :-(
+COPY ./.profile /tmp/.profile
+RUN cat /tmp/.profile >> /home/vscode/.bashrc && \
+    cat /tmp/.profile >> /home/vscode/.zshrc && \
+    rm /tmp/.profile
+    
 # Copy startup
 COPY ./startup.sh /
 RUN chmod +x /startup.sh
