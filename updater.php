@@ -121,7 +121,7 @@ class KttCodeUpdater
           'name'              => $this->plugin["Name"],
           'slug'              => $this->basename,
           'requires'          => '6.0',
-          'tested'            => '6.2.2',
+          'tested'            => '6.7.1',
           'rating'            => '100.0',
           'num_ratings'       => '1337',
           'downloaded'        => '42',
