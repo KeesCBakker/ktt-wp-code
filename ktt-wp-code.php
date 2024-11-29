@@ -8,7 +8,7 @@
  * Plugin Name:   KeesTalksTech Code
  * Plugin URI:    https://github.com/KeesCBakker/ktt-wp-code
  * Description:   A plugin to support Highlight.js and Mermaid
- * Version:       2.0.0
+ * Version:       2.1.0
  * Author:        Kees C. Bakker
  * Author URI:    https://keestalkstech.com/
  * License:       MIT
